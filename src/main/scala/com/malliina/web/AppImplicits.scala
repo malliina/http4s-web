@@ -19,7 +19,6 @@ trait AppImplicits
   extends syntax.AllSyntaxBinCompat
   with Http4sDsl[IO]
   with CirceInstances
-//  with PlayInstances
   with ScalatagsInstances
   with Extractors
 

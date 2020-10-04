@@ -2,6 +2,7 @@ package com.malliina.web
 
 import cats.data.NonEmptyList
 import io.circe.generic.semiauto._
+import io.circe.{Decoder, Encoder}
 
 case class Name(name: String) extends AnyVal
 
@@ -34,9 +35,22 @@ object SingleError {
   def input(message: String): SingleError = apply(message, "input")
 }
 
-case class Errors(errors: NonEmptyList[SingleError])
+case class Errors(errors: NonEmptyList[SingleError]) {
+  def message = errors.head.message
+}
 
 object Errors {
   implicit val json = deriveCodec[Errors]
   def apply(message: String): Errors = Errors(NonEmptyList(SingleError(message, "general"), Nil))
+}
+
+trait PrimitiveId extends Any {
+  def id: String
+  override def toString = id
+}
+
+trait PrimitiveCompanion[T <: PrimitiveId] {
+  def apply(s: String): T
+  implicit val dec = Decoder.decodeString.map[T](s => apply(s))
+  implicit val enc = Encoder.encodeString.contramap[T](_.id)
 }

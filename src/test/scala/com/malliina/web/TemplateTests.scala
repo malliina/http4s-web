@@ -23,13 +23,4 @@ class TemplateTests extends FunSuite {
     val body = response.as[String].unsafeRunSync()
     assertEquals(body, AppService.pong)
   }
-
-  test("interop with Future") {
-    implicit val dec = jsonOf[IO, AppResult]
-    val request = Request[IO](Method.GET, uri"/items")
-    val response = service.run(request).unsafeRunSync()
-    assertEquals(response.status, Status.Ok)
-    val result = response.as[AppResult].unsafeRunSync()
-    assertEquals(result, AppResult.example)
-  }
 }
